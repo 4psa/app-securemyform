@@ -1,0 +1,129 @@
+/*
+ * 4PSA VoipNow Professional Plug-ins: Secure My Form
+ *
+ * CSS definitions
+ *
+ * Copyright (c) 2011 Rack-Soft (www.4psa.com).
+ *
+*/
+ 
+body {
+	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	color: #000000;
+	background: #E4EDDC;
+}
+ 
+.background{
+	background-color: #F1FFE5;
+	border-color: #6FA342;
+    border-radius: 11px 11px 11px 11px;
+    border-style: solid;
+    border-width: 1px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	width: 600px;
+	margin:auto;
+	margin-top:100px;
+}
+.container{
+	margin:3px;
+	padding-bottom: 5px;
+	min-height: 200px;
+} 
+
+.header{
+	background-color: #6FA342;
+	border-color: #6FA342 #BBBBBB #BFBFBF #6FA342;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	font-size: 17px;
+	text-align: center;
+	color:#FFFFFF;
+	border-radius: 11px 11px 0px 0px;
+}
+.form_content{
+	margin-top: 20px;
+}
+.warning{
+	color: #E05438;
+	text-align: center;
+}
+
+.info{
+	color: #6FA342;
+	text-align: center;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+.input {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+	height: 30px;
+	width: 400px;
+	margin-left:auto;
+	margin-right:auto;
+}
+.input input {
+	border: 1px solid #3C8501;
+	width: 250px;
+	height: 20px;
+	border-radius: 11px 11px 11px 11px;
+	padding-left: 5px;
+}
+.input span {
+	width: 150px;
+}
+.label {
+	float:left;
+	clear:left;
+	color: #444444;
+	width: 110px;
+	text-align: left;
+}
+.field{
+	float:left;
+	clear:right;
+}
+.required{
+	color: #cc0000;
+}
+.submit {
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.submit input {
+	background-color: #6FA342;
+	border-color: #3C8501 #3C8501 #3C8501 #3C8501;
+	border-radius: 11px 11px 11px 11px;
+	border: 1px solid #6FA342;
+	width: 100px;
+	height: 24px;
+	color: #FFFFFF;
+	cursor: pointer;
+	font-weight: bold;
+}
+.random_number {
+	color:#F67B1E;
+	font-size: 50px;
+	text-align: center;
+	margin-top: 10px;
+}
+.report{
+	margin-top: 30px;
+	margin-left:auto;
+	margin-right:auto;
+	width: 400px;
+	font-size: 15px;
+	color: #444444;
+}
+.report div {
+	margin-bottom: 10px;
+}
+.report span{
+	font-weight: bold;
+}
