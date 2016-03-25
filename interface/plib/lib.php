@@ -11,7 +11,7 @@
  *
 */
 
-require_once('../../httplib/cURLRequest.php');
+require_once('cURLRequest.php');
 
 /**
  * Initiates the call to the VoipNow server
