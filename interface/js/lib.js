@@ -1,19 +1,24 @@
-/*
- * 4PSA VoipNow - CallAPI validate phone number
+/**
+ * 4PSA VoipNow - UnifiedAPI validate phone number
  *
  * Validates the phone number introduced by the user in the input field
  *
- * Copyright (c) 2010 Rack-Soft (www.4psa.com). All rights reserved.
+ * @version 2.0.0
+ * @license released under GNU General Public License
+ * @copyright (c) 2012 4PSA. (www.4psa.com). All rights reserved.
+ * @link http://wiki.4psa.com
  *
 */
+
+var warnIcon = '<span class="warning-icon"></span>';
 
 /**
 * Fetches a language message
 * @param code - code of the message
 */
 function getLangMsg(code){
-	if(typeof(msg_arr[code]) != 'undefined') {
-		return msg_arr[code]
+	if(typeof(msgArr[code]) != 'undefined') {
+		return msgArr[code]
 	}
 	return code;
 } 
@@ -77,7 +82,7 @@ function verifyFieldValue() {
 	 if (check == false) {
 		/* display an error message */
 		var errorDiv = document.getElementById('warn_msg').style.display = "";
-		var errorText = document.getElementById('warn_msg').innerHTML = getLangMsg('err_invalid_phone_number_entered');
+		var errorText = document.getElementById('warn_msg').innerHTML = warnIcon+getLangMsg('err_invalid_phone_number_entered');
 		return false;
 	} else {
 		return true;
@@ -162,7 +167,7 @@ function getAttemptStatus(phoneNumber, randomNumber) {
 				xmlHttpAttempt.send(null);
 				
 				/* set the timer to 5 sec  */
-				setTimeout('getAttemptStatus(\'' + phoneNumber + '\',' + randomNumber + ')' , 5000);
+				setTimeout('getAttemptStatus(\'' + phoneNumber + '\',' + randomNumber + ')' , 10000);
 			}
 		}
 	}
@@ -178,6 +183,7 @@ function displayAttemptStatus() {
 		var ok = 0;
 		var div = document.getElementById('info_msg');
 		div.style.display = "";
+		console.log(response);
 		if (response.charAt(0) == '0') {
 			/* the phone is ringing or the customer answered */
 			div.innerHTML = getLangMsg('status_enter_number');
@@ -223,11 +229,11 @@ function displayAttemptStatus() {
 			var attemptsLeft = pieces[1];
 			if (attemptsLeft == "0") {
 				div.innerHTML = getLangMsg('status_max_attempts_reached');
-				document.getElementById('warn_msg').innerHTML = getLangMsg('status_max_attempts_reached');
+				document.getElementById('warn_msg').innerHTML = warnIcon+getLangMsg('status_max_attempts_reached');
 			}
 			else {
 				div.innerHTML = getLangMsg('status_incorrect_number').replace('{attemptsLeft}', attemptsLeft);
-				document.getElementById('warn_msg').innerHTML = getLangMsg('status_incorrect_number').replace('{attemptsLeft}', attemptsLeft);
+				document.getElementById('warn_msg').innerHTML = warnIcon+getLangMsg('status_incorrect_number').replace('{attemptsLeft}', attemptsLeft);
 			}
 			ok = 1;
 		}
@@ -236,7 +242,7 @@ function displayAttemptStatus() {
 			document.getElementById('warn_msg').innerHTML = "";
 		}
 		if (response.charAt(0) == '5') {
-			document.getElementById('warn_msg').innerHTML = getLangMsg('err_processing_request');
+			document.getElementById('warn_msg').innerHTML = +warnIcongetLangMsg('err_processing_request');
 		}
 		if (ok == 0) {
 			/* an error occurred; the ajax must stop */

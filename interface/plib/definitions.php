@@ -1,11 +1,11 @@
 <?php
 
-/*
- * 4PSA VoipNow - CallAPI validate phone number
+/**
+ * 4PSA VoipNow - UnifiedApi validate phone number
  *
  * Statuses for the attempt
  *
- * Copyright (c) 2010 Rack-Soft (www.4psa.com). All rights reserved.
+ * Copyright (c) 2012 Rack-Soft (www.4psa.com). All rights reserved.
  *
 */	
 define("RINGING", 0);

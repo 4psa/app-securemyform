@@ -1,81 +1,56 @@
 <?php
-/*
- * 4PSA VoipNow Professional Plug-ins: Secure My Form
+/**
+ * 4PSA VoipNow app: Secure My Form
  *
- * This file contains all the function used by this plug-in
+ * This file contains all the function used by this app
  *
- * Copyright (c) 2011 Rack-Soft (www.4psa.com).
+ * @version 2.0.0
+ * @license released under GNU General Public License
+ * @copyright (c) 2012 4PSA. (www.4psa.com). All rights reserved.
+ * @link http://wiki.4psa.com
  *
 */
+
+require_once('../../httplib/cURLRequest.php');
 
 /**
- * Initiates the call to the VoipNow Professional server
+ * Initiates the call to the VoipNow server
  *
  * @param $phone_number - the phone number entered by the user using the interface
- * @global $msg_arr - the array that contains the language messages
+ * @global $msgArr - the array that contains the language messages
  *
- * @return the ID of the call returned by CallAPI or FALSE otherwise
+ * @return the ID of the call returned by UnifiedAPI or FALSE otherwise
  *
 */
-function call($phone_number) {
+function call($phoneNumber) {
 
-	global $msg_arr;
+	global $msgArr;
 	
-	$app_config = getConfig();
+	$config = getConfig();
+	/* This is the URL accessed using the REST protocol */
+	$reqUrl = 'https://'.$config['VN_SERVER_IP'].'/unifiedapi/phoneCalls/@me/simple';
 	
-	try	{
-		$o = new OAuth($app_config['OAUTH_CONSUMER_KEY'], $app_config['OAUTH_CONSUMER_SECRET'], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_AUTHORIZATION);
-		$o->disableSSLChecks();	
-	  	
-		if ($app_config['TWO_LEGGED_OAUTH'] == 0) {
-			$o->setToken($app_config['OAUTH_ACCESS_TOKEN'], $app_config['OAUTH_ACCESS_SECRET']);
-		}
-		
-		/* initiates the call */
-		$o->fetch("https://".$app_config['VN_SERVER_IP']."/callapi/".$app_config['VN_VERSION']."/Call/MakeCall", 
-				array("PhoneNumberToCall" => $app_config['VN_IVR_EXTENSION'],
-						"FromNumber" => $phone_number,
-						"ExtensionAccount" => $app_config['VN_CHARGE_EXTENSION'],
-						"CallDuration" => $app_config['MAX_TIME_OF_CALL']));
-		
-		/* get the response */
-		$resp = $o->getLastResponse();
-		
-		$xmlResponse = new SimpleXMLElement($resp);
-		if ($xmlResponse->Exception) {
-			/* CallAPI error occured */
-			error_log($msg_arr['error_log_make_call'] . $resp);
-			
-			/* Send email to announce the problem */
-			$body = str_replace('{err_msg}', "<b>" .  $xmlResponse->Exception[0]->Message . "</b>",  BODY) . BODY_END;
-			$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-			if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-				error_log($msg_arr['error_log_email_sent']);
-			} else {
-				error_log($msg_arr['error_log_email_not_sent']);
-			}
-			
-			return false;
-		}
-		/* take the call id */		
-		if ($xmlResponse->Answer) {
-			$APIID = $xmlResponse->Answer[0]->APIID;
-			return $APIID;
-		}
-	} catch(OAuthException $E) {
-		/* Authentication problem occured */
-		error_log($msg_arr['error_log_make_call'] . $E);
-		
-		/* Send email to announce the problem */
-		$body = str_replace('{err_msg}', "<pre>print_r($E)",  BODY) . BODY_END;
-		$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-			error_log($msg_arr['error_log_email_sent']);
-		} else {
-			error_log($msg_arr['error_log_email_not_sent']);
-		}
-		return false;
-	}
+	$request = new cURLRequest();
+	$request->setMethod(cURLRequest::METHOD_POST);
+	$request->setHeaders(array(
+		'Content-type' => 'application/json',
+		'Authorization' => $config['OAUTH_ACCESS_TOKEN']
+	));
+	
+	
+	$jsonRequest = array(
+		'extension' => $config['VN_CHARGE_EXTENSION'],
+		'phoneCallView' => array(array(
+			'source' => array($phoneNumber),
+			'destination' => $config['VN_IVR_EXTENSION']))
+	);
+	
+	$request->setBody(json_encode($jsonRequest));
+	$response = $request->sendRequest($reqUrl);
+
+	$jsonresult = json_decode($response->getBody(true) ,true);
+	
+	return $jsonresult[0]['id'];
 }
 
 /**
@@ -83,14 +58,14 @@ function call($phone_number) {
  *
  * @param $phone_number - the customer's phone number
  * @param $APIID - the api id of the initiated call 
- * @global $msg_arr - the array that contains the language messages
+ * @global $msgArr - the array that contains the language messages
  * 
  * @return $random_number - the random number introduced into the database
  *			or false, on failure
 */
 function processRequest($phone_number, $APIID) {
 
-	global $msg_arr;
+	global $msgArr;
 
 	if (empty($APIID)) {
 		return false;
@@ -102,7 +77,7 @@ function processRequest($phone_number, $APIID) {
 	$random_number = rand($app_config['MIN_RANDOM_NUMBER'], $app_config['MAX_RANDOM_NUMBER']);
 					
 	/* Connect to database */
-	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msg_arr['err_mysql_connection']);
+	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msgArr['err_mysql_connection']);
 	mysqli_select_db($conn, $app_config['MYSQL_DBNAME']);
 			
 	/* Insert into calls table */
@@ -133,17 +108,10 @@ function processRequest($phone_number, $APIID) {
 		}
 	}
 	
-	/* An error occured */
-	$body = str_replace('{err_msg}', "<b>" . mysqli_error($conn) . "<b>",  BODY) . BODY_END;
-	$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-	if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-		error_log($msg_arr['error_log_email_sent']);
-		$db_email_sent = 1;
-	} else {
-		error_log($msg_arr['error_log_email_not_sent']);
-	}
+	// An error occured 
+	error_log(mysqli_error($conn));
 	
-	/* Close any opened connection */
+	// Close any opened connection 
 	$conn->close();
 	return false;
 }
@@ -198,13 +166,13 @@ function checkPermissions($phone_number, &$err_code) {
  * Checks if the number is not banned (is not in the 'bans' table)
  * 
  * @param $phone_number - the phone number entered
- * @global $msg_arr - the array that contains the language messages
+ * @global $msgArr - the array that contains the language messages
  *
  * @return 1 if the number is not banned, 0 if the number is banned
 */
 function checkCallPermissions($phone_number) {
 
-	global $msg_arr;
+	global $msgArr;
 	
 	if(empty($phone_number)) {
 		return false;
@@ -213,7 +181,7 @@ function checkCallPermissions($phone_number) {
 	$app_config = getConfig();
 	
 	/* Connect to database */
-	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msg_arr['err_mysql_connection']);
+	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msgArr['err_mysql_connection']);
 	mysqli_select_db($conn, $app_config['MYSQL_DBNAME']);
 	
 	$current_time = time();
@@ -226,15 +194,8 @@ function checkCallPermissions($phone_number) {
 	
 	if ($bans === false) {
 		$db_error = 1;
-		/* Send mail about this problem */
-		$body = str_replace('{err_msg}', "<b>" . mysqli_error($conn) . "<b>",  BODY) . BODY_END;
-		$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-			$db_email_sent = 1;
-			error_log($msg_arr['error_log_email_sent']);
-		} else {
-			error_log($msg_arr['error_log_email_not_sent']);
-		}
+		
+		error_log(mysqli_error($conn));
 	}
 	if ($db_error == 0) {
 		/* if exists a ban for this customer in the last 24h */
@@ -245,14 +206,10 @@ function checkCallPermissions($phone_number) {
 			return 1;
 		}
 	} else {
-		if ($db_email_sent == 1) {
-			return 2;
-		} else {
-			return 3;
-		}
+		return 2;
 	}
-	$conn->close();	
 	
+	$conn->close();	
 }
 
 /**
@@ -260,14 +217,14 @@ function checkCallPermissions($phone_number) {
  *
  * @param boolean $equal - true if is permitted to have exact 
  * 							MAX_SUBMITS_FOR_IP (needed for AttemptStatus)
- * @global $msg_arr - the array that contains the language messages
+ * @global $msgArr - the array that contains the language messages
  *
  * @return 1 if the IP has permissions, 0 if it hasn't, 2 if there was a database error and an email was sent, 
  * 										3 if there was a db error and a sending email error
 */
 function checkIPPermissions($equal) {
 
-	global $msg_arr;
+	global $msgArr;
 
 	$app_config = getConfig();
 
@@ -279,7 +236,7 @@ function checkIPPermissions($equal) {
     }
 	
 	/* Connect to database */
-	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msg_arr['err_mysql_connection']);
+	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msgArr['err_mysql_connection']);
 	mysqli_select_db($conn, $app_config['MYSQL_DBNAME']);
 	
 	$current_time = time();
@@ -291,15 +248,8 @@ function checkIPPermissions($equal) {
 	$db_email_sent = 0;
 	if ($attempts_result === false) {
 		$db_error = 1;
-		/* Send mail about this problem */
-		$body = str_replace('{err_msg}', "<b>" . mysqli_error($conn) . "</b>",  BODY) . BODY_END;
-		$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-			error_log($msg_arr['error_log_email_sent']);
-			$db_email_sent = 1;
-		} else {
-			error_log($msg_arr['error_log_email_not_sent']);
-		}	
+
+		error_log(mysqli_error($conn));
 	}
 	if ($db_error == 0) {
 		$attempts_array = ($attempts_result->fetch_assoc());
@@ -316,12 +266,9 @@ function checkIPPermissions($equal) {
 			return 0;
 		}
 	} else {
-		if ($db_email_sent == 1) {
-			return 2;
-		} else {
-			return 3;
-		}
-	}	
+		return 2;
+	}
+	
 	$conn->close();
 }
 
@@ -331,13 +278,13 @@ function checkIPPermissions($equal) {
  * @param string $phone_number - the phone number to check
  * @param boolean $equal - true if is permitted to have exact MAX_SUBMITS_FOR_NUMBER 
  *							(needed for AttemptStatus)
- * @global $msg_arr - the array that contains the language messages
+ * @global $msgArr - the array that contains the language messages
  *
  * @return 1 if it is allowed, 0 if it isn't
 */
 function checkPhonePermissions($phone_number, $equal) {
 
-	global $msg_arr;
+	global $msgArr;
 
 	if(empty($phone_number)) {
 		return false;
@@ -346,7 +293,7 @@ function checkPhonePermissions($phone_number, $equal) {
 	$app_config = getConfig();
 
 	/* Connect to database */
-	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msg_arr['err_mysql_connection']);
+	$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msgArr['err_mysql_connection']);
 	mysqli_select_db($conn, $app_config['MYSQL_DBNAME']);
 	
 	$current_time = time();
@@ -358,15 +305,7 @@ function checkPhonePermissions($phone_number, $equal) {
 	$db_email_sent = 0;
 	if ($attempts_result === false) {
 		$db_error = 1;
-		/* Send mail about this problem */
-		$body = str_replace('{err_msg}', "<b>" . mysqli_error($conn) . "</b>",  BODY) . BODY_END;
-		$headers = "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		if (mail($app_config['EMAIL'], SUBJECT, $body, $headers)) {
-			error_log($msg_arr['error_log_email_sent']);
-			$db_email_sent = 1;
-		} else {
-			error_log($msg_arr['error_log_email_not_sent']);
-		}
+		error_log(mysqli_error($conn));
 	}
 	if ($db_error == 0) {
 		$attempts_array = ($attempts_result->fetch_assoc());
@@ -383,11 +322,7 @@ function checkPhonePermissions($phone_number, $equal) {
 			return 0;
 		}
 	} else {
-		if ($db_email_sent == 1) {
-			return 2;
-		} else {
-			return 3;
-		}
+		return 2;
 	}
 			
 	$conn->close();

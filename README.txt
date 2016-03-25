@@ -1,44 +1,25 @@
-# VoipNow Demo App - Click2Fax
+4PSA VoipNow SecureMyForm
+--------------------------------------
 
-### Introduction
+Disclaimer
+----------
+This demonstrative code SHOULD NOT be used for production. 
+It was designed to show how third-party applications interact 
+with the 4PSA VoipNow using the UnifiedAPI web service.
+Therefore, illustrating the most common mistakes requires no
+validations and the error-checking process is relaxed. 
 
-SecureMyForm is a demo app that uses the <a href="https://wiki.4psa.com/display/VNUAPI30/VoipNow+UnifiedAPI" target="_blank">VoipNow UnifiedAPI</a> to enable the validation of a form through an IVR extension.
+Requirements
+------------
+1. A server with a version of VoipNow installed. 
+The version must be higher than 3.0.0.
 
-For information regarding the installation of the demo, please check <a href="https://wiki.4psa.com/display/VNUAPI30/SecureMyForm" target="_blank">4PSA Wiki</a>.
+2. PHP 5.3 or higher is required.
 
-### No Warranty
+Installation
+------------
 
-This demonstrative code should not be used in production.
-
-
-### License
-
-Copyrights (c) 2013-2015, 4PSA. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of 4PSA nor the names of its contributors may be used 
-      to endorse or promote products derived from this software without specific 
-      prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL 4PSA BE LIABLE FOR ANY DIRECT, INDIRECT, 
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-### Details
-
+After downloading the plug-in from the 4PSA Wiki, you need to set it up.
 
 1. You need to run the SQL located at sql/securemyform.sql. This will create several tables used by the application.
 
@@ -79,3 +60,34 @@ c. Add a new "CallAPI Interactive" action that needs to be set up as follows:
 	
 When the IVR runs this action, it will access the validate_request.php setting the activateCode value to the $activationCode variable registered in the previous action.
 
+Copyrights
+----------
+
+4PSA VoipNow SecureMyForm
+
+Copyright (c) 2012, Rack-Soft (www.4psa.com). All rights reserved.
+VoipNow is a Trademark of Rack-Soft, Inc
+4PSA is a Registered Trademark of Rack-Soft, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of 4PSA nor the names of its contributors may be used 
+      to endorse or promote products derived from this software without specific 
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL 4PSA BE LIABLE FOR ANY DIRECT, INDIRECT, 
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

@@ -1,11 +1,14 @@
 <?php
-/*
- * 4PSA VoipNow - CallAPI validate phone number
+/**
+ * 4PSA VoipNow - UnifiedAPI validate phone number
  *
  * Verifies the status of the attempt
  * Called in AJAX at 3 seconds
  *
- * Copyright (c) 2010 Rack-Soft (www.4psa.com). All rights reserved.
+ * @version 2.0.0
+ * @license released under GNU General Public License
+ * @copyright (c) 2012 4PSA. (www.4psa.com). All rights reserved.
+ * @link http://wiki.4psa.com
  *
 */
 
@@ -17,9 +20,6 @@ require_once('language/en.php');
 
 /* Request the defintions */
 require_once('plib/definitions.php');
-
-/* Request email settings */
-require_once('plib/email.php');
 
 /* Request the functions used for the requests */
 require_once('plib/lib.php');
@@ -41,7 +41,7 @@ if ($ip_permission == 2 || $ip_permission == 3) {
 	if ($ip_permission == 1 && $phone_permission == 1 && $call_permission == 1) {
 		$app_config = getConfig();
 		/* Connect to database */
-		$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msg_arr['err_mysql_connection']);
+		$conn = mysqli_connect($app_config['MYSQL_HOST'], $app_config['MYSQL_USER'], $app_config['MYSQL_PASS']) or die ($msgArr['err_mysql_connection']);
 		mysqli_select_db($conn, $app_config['MYSQL_DBNAME']);
 	
 		/* same phone number, same random number, within the last 2 minutes */

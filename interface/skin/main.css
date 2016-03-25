@@ -8,53 +8,72 @@
 */
  
 body {
-	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-family: Segoe UI,Tahoma,Arial,Verdana,sans-serif;
 	font-size: 14px;
 	font-weight: normal;
 	color: #000000;
-	background: #E4EDDC;
+	background: white;
 }
  
 .background{
-	background-color: #F1FFE5;
-	border-color: #6FA342;
-    border-radius: 11px 11px 11px 11px;
-    border-style: solid;
-    border-width: 1px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	background-color: white;
+    border-radius: 8px 8px 8px 8px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.60);
 	width: 600px;
 	margin:auto;
 	margin-top:100px;
 }
+
 .container{
-	margin:3px;
 	padding-bottom: 5px;
 	min-height: 200px;
-} 
+}
+
+.description {
+	margin-top: 12px;
+	text-align: center;
+}
 
 .header{
-	background-color: #6FA342;
+	background-color: #F37B2B;
 	border-color: #6FA342 #BBBBBB #BFBFBF #6FA342;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	margin-bottom: 20px;
-	font-size: 17px;
+	font-size: 20px;
 	text-align: center;
 	color:#FFFFFF;
-	border-radius: 11px 11px 0px 0px;
+	border-radius: 8px 8px 0px 0px;
+	margin-top: -3px;
+	width: 600px;
 }
+
 .form_content{
 	margin-top: 20px;
 }
+
 .warning{
-	color: #E05438;
-	text-align: center;
+	text-indent: 15px;
+	margin-bottom: 10px;
+	border-top: 1px solid #F0CC60;
+	border-bottom: 1px solid #F0CC60;
+	background: #FCF9D2;
+	width: 590px;
+	padding: 4px 5px 4px 5px;
+	display: none;
+}
+
+.warning-icon {
+	background: url("alert.gif");
+	background-repeat: no-repeat;
+	background-position: 0px 3px;
+	width: 16px;
+	height: 13px;
+	padding-right: 16px;
+	margin-right: 5px;
 }
 
 .info{
-	color: #6FA342;
 	text-align: center;
-	font-weight: bold;
 	margin-top: 10px;
 }
 
@@ -68,11 +87,13 @@ body {
 	margin-right:auto;
 }
 .input input {
-	border: 1px solid #3C8501;
 	width: 250px;
 	height: 20px;
-	border-radius: 11px 11px 11px 11px;
-	padding-left: 5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	border: 1px solid #BABABA;
+	margin-left: auto;
+	margin-right: auto;
 }
 .input span {
 	width: 150px;
@@ -97,18 +118,19 @@ body {
 	margin-bottom: 10px;
 }
 .submit input {
-	background-color: #6FA342;
-	border-color: #3C8501 #3C8501 #3C8501 #3C8501;
-	border-radius: 11px 11px 11px 11px;
-	border: 1px solid #6FA342;
+	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.40);
+	background: #444;
+	border: 0 solid white;
+	border-radius: 5px;
 	width: 100px;
 	height: 24px;
 	color: #FFFFFF;
+	font-weight: normal;
 	cursor: pointer;
-	font-weight: bold;
+	margin-left: auto;
+	margin-right: auto;
 }
 .random_number {
-	color:#F67B1E;
 	font-size: 50px;
 	text-align: center;
 	margin-top: 10px;

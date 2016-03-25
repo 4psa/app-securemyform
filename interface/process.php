@@ -9,9 +9,9 @@ require_once('language/en.php');
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <script type="text/javascript">
 	/* Use the same messages as in php for JS*/
-	var msg_arr = [];
+	var msgArr = [];
 	<?php foreach($msg_arr as $key => $value) {
-		echo 'msg_arr["'.$key.'"] = "'.$value.'"; ';
+		echo 'msgArr["'.$key.'"] = "'.$value.'"; ';
 	} ?>;
 
 </script>

@@ -1,16 +1,16 @@
 <?php
-
-/*
- * 4PSA VoipNow Professional Plug-ins: Secure My Form
+/**
+ * 4PSA VoipNow App: Secure My Form
  *
  * Validates the random number introduced by the user on the phone
- * It is called from CallAPI Interactive application
+ * It is called from UnifiedAPI Interactive application
  *
- * Copyright (c) 2010 Rack-Soft (www.4psa.com). All rights reserved.
+ * @version 2.0.0
+ * @license released under GNU General Public License
+ * @copyright (c) 2012 4PSA. (www.4psa.com). All rights reserved.
+ * @link http://wiki.4psa.com
  *
 */
-
-
 	
 if(isset($_REQUEST)) {
 	$req_vars = $_REQUEST;		
@@ -20,16 +20,13 @@ if(isset($_REQUEST)) {
 	$req_vars = $_GET;		
 }
 
-
-error_log('Secure My Form: GET VARS= '.serialize($_GET));
-error_log('Secure My Form: POST VARS= '.serialize($_POST));
-error_log('Secure My Form: REQUEST VARS= '.serialize($_REQUEST));
+file_put_contents('/usr/local/voipnow/admin/htdocs/devel/unifiedapi/SecureMyForm/phperrors.log', print_r($_REQUEST, true), FILE_APPEND);
 
 require_once('language/en.php');
 
 if(empty($req_vars['activationCode'])) {
-	echo $msg_arr['err_no_activation_code'];
-	error_log($msg_arr['error_log_no_activation_code']);
+	echo $msgArr['err_no_activation_code'];
+	error_log($msgArr['error_log_no_activation_code']);
 	exit(0);
 }
 	
@@ -44,7 +41,7 @@ $dbhost = $app_config['MYSQL_HOST'];
 $dbuser = $app_config['MYSQL_USER'];
 $dbpass = $app_config['MYSQL_PASS'];
 
-$conn = mysqli_connect($dbhost, $dbuser, $dbpass) or die ($msg_arr['err_mysql_connection']);
+$conn = mysqli_connect($dbhost, $dbuser, $dbpass) or die ($msgArr['err_mysql_connection']);
 
 $dbname = $app_config['MYSQL_DBNAME'];
 mysqli_select_db($conn, $dbname);
@@ -61,16 +58,26 @@ if ($row['RandomNumber'] == $req_vars['activationCode']) {
 	$sql_modify = "UPDATE calls SET AttemptsNumber = 1 where PhoneNumber = \"".$row['PhoneNumber']."\" AND Time = \"".$row['Time']."\" AND ApiId = \"" . $apiId . "\"";
 	$res = mysqli_query($conn, $sql_modify);
 	if ($res === false) {
-		error_log($msg_arr['error_log_database_error'] . mysqli_error($conn));
+		error_log($msgArr['error_log_database_error'] . mysqli_error($conn));
 	}
+	
+	echo '<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>';
+	
 } else {
 	/* the user failed to introduce the correct number */
 	/* note in the database that the attempt was wrong */
 	$sql_modify = "UPDATE calls SET AttemptsNumber=0 WHERE PhoneNumber=\"".$row['PhoneNumber']."\" AND Time=\"".$row['Time']."\" AND ApiId = \"" . $apiId . "\"";
 	$res = mysqli_query($conn, $sql_modify);
 	if ($res === false) {
-		error_log($msg_arr['error_log_database_error'] . mysqli_error($conn));
+		error_log($msgArr['error_log_database_error'] . mysqli_error($conn));
 	}
+	
+	
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+	<Response>
+	     <Pause length="5"/> 
+	</Response>';
+	
 	/* count the wrong attempts */
 	/* select the entries for this customer from the last 24h */
 	$current_time = time();
@@ -92,7 +99,7 @@ if ($row['RandomNumber'] == $req_vars['activationCode']) {
 		$sql_ban = "INSERT into bans(PhoneNumber, Time) values('".mysqli_real_escape_string($conn, $row['PhoneNumber'])."', " . time() .")";
 		$res = mysqli_query($conn, $sql_ban);
 		if ($res === false) {
-			error_log($msg_arr['error_log_database_error'] . mysqli_error($conn));
+			error_log($msgArr['error_log_database_error'] . mysqli_error($conn));
 		}
 		$params = array("context" => "ban", "option" => "s", "priority" => 1);
 	} else {
