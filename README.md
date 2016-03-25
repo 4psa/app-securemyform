@@ -1,4 +1,4 @@
-# VoipNow Demo App - Click2Fax
+# VoipNow Demo App - SecureMyForm
 
 ### Introduction
 
